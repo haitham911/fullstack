@@ -9,10 +9,10 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/victorsteven/fullstack/api/auth"
-	"github.com/victorsteven/fullstack/api/models"
-	"github.com/victorsteven/fullstack/api/responses"
-	"github.com/victorsteven/fullstack/api/utils/formaterror"
+	"github.com/haitham911/fullstack/api/auth"
+	"github.com/haitham911/fullstack/api/models"
+	"github.com/haitham911/fullstack/api/responses"
+	"github.com/haitham911/fullstack/api/utils/formaterror"
 )
 
 func (server *Server) CreatePost(w http.ResponseWriter, r *http.Request) {
