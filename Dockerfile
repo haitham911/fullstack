@@ -4,7 +4,7 @@ FROM golang:alpine as builder
 # ENV GO111MODULE=on
 
 # Add Maintainer info
-LABEL maintainer="haitham911 <haitham911eg@gmail.com>"
+LABEL maintainer="haitham911eg <haitham911eg@gmail.com>"
 
 # Install git.
 # Git is required for fetching the dependencies.
