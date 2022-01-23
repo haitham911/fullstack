@@ -9,6 +9,7 @@ fields
 > All endpoints should be authenticated except the user endpoints
 > Implement CRUD for user and product models
 > Implement /buy endpoint (accepts productId, amount of products) so users with a “buyer” role can buy products with the money they’ve deposited.
+
 > **Evaluation criteria:**
 >
 > Language/Framework of choice best practises
