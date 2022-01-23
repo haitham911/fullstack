@@ -1,7 +1,7 @@
-version: '3'
+version:  '3.1'
 services:
   app:
-    container_name: full_app
+    container_name: task_app
     build: .
     ports: 
       - 8080:8080 
@@ -9,43 +9,41 @@ services:
     volumes:
       - api:/usr/src/app/
     depends_on:
-      - fullstack-postgres          # Uncomment this when using postgres.
-      # - fullstack-mysql           # Uncomment this when using mysql.
+      - task-postgres          # Uncomment this when using postgres.
+      # - task-mysql           # Uncomment this when using mysql.
     networks:
-      - fullstack
-
-
-  fullstack-postgres:
+      - taskhost
+  task-postgres:
     image: postgres:latest
-    container_name: full_db_postgres
+    container_name: database
     environment:
-      - POSTGRES_USER=${DB_USER}  
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - DATABASE_HOST=${DB_HOST} 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres784
+      POSTGRES_DB: task_db
+      DATABASE_HOST: task-postgres
     ports:
       - '5432:5432'
     volumes:
-      - database_postgres:/var/lib/postgresql/data
+      - database_postgre:/var/lib/postgresql/data
     networks:
-      - fullstack
+      - taskhost
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: haitham@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin1234
     depends_on:
-      - fullstack-postgres
+      - task-postgres
     ports:
       - "5050:80"
     networks:
-      - fullstack
+      - taskhost
     restart: unless-stopped
 
   
-  # fullstack-mysql:
+  # task-mysql:
   #   image: mysql:5.7
   #   container_name: full_db_mysql
   #   ports: 
@@ -59,13 +57,13 @@ services:
   #   volumes:
   #     - database_mysql:/var/lib/mysql
   #   networks:
-  #     - fullstack
+  #     - taskhost
   
   # phpmyadmin:
   #   image: phpmyadmin/phpmyadmin
   #   container_name: phpmyadmin_container
   #   depends_on:
-  #     - fullstack-mysql
+  #     - taskhost-mysql
   #   environment:
   #     - PMA_HOST=mysql # Note the "mysql". Must be the name of the what you used as the mysql service.
   #     - PMA_USER=${DB_USER}
@@ -75,15 +73,15 @@ services:
   #     - 9090:80
   #   restart: always
   #   networks:
-  #     - fullstack
+  #     - taskhost
 
 
 volumes:
   api:
-  database_postgres:                  # Uncomment this when using postgres.
+  database_postgre:                  # Uncomment this when using postgres.
   # database_mysql:                   # Uncomment this when using mysql.
 
 # Networks to be created to facilitate communication between containers
 networks:
-  fullstack:
+  taskhost:
     driver: bridge

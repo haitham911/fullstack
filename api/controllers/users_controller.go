@@ -21,12 +21,25 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 	}
-	user := models.User{}
-	err = json.Unmarshal(body, &user)
+	type NewUser struct {
+		Username string  `json:"username"`
+		Email    string  `json:"email"`
+		Password string  `json:"password"`
+		Role     string  `json:"role"`
+		Deposit  float32 `json:"deposit"`
+	}
+	newuser := NewUser{}
+	err = json.Unmarshal(body, &newuser)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+	user := models.User{}
+	user.Password = newuser.Password
+	user.Email = newuser.Email
+	user.Deposit = newuser.Deposit
+	user.Role = newuser.Role
+	user.Username = newuser.Username
 	user.Prepare()
 	err = user.Validate("")
 	if err != nil {

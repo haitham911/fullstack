@@ -15,6 +15,7 @@ type Product struct {
 	AmountAvailable float32   `gorm:"size:100;not null;" json:"amount_available"`
 	Seller          User      `json:"seller"`
 	SellerID        uint32    `gorm:"not null" json:"seller_id"`
+	Price           float32   `gorm:"size:100;not null;" json:"price"`
 	CreatedAt       time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt       time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
@@ -22,8 +23,6 @@ type Product struct {
 func (p *Product) Prepare() {
 	p.ID = 0
 	p.ProductName = html.EscapeString(strings.TrimSpace(p.ProductName))
-	p.AmountAvailable = -1
-	p.Seller = User{}
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
 }
@@ -39,6 +38,9 @@ func (p *Product) Validate() error {
 	}
 	if p.SellerID < 1 {
 		return errors.New("Required Seller")
+	}
+	if p.Price < 1 {
+		return errors.New("Required Price")
 	}
 	return nil
 }
@@ -119,4 +121,20 @@ func (p *Product) DeleteAProduct(db *gorm.DB, pid uint64, uid uint32) (int64, er
 		return 0, db.Error
 	}
 	return db.RowsAffected, nil
+}
+func (p *Product) BuyProduct(db *gorm.DB) (*Product, error) {
+
+	var err error
+
+	err = db.Debug().Model(&Product{}).Where("id = ?", p.ID).Updates(Product{ProductName: p.ProductName, AmountAvailable: p.AmountAvailable, UpdatedAt: time.Now()}).Error
+	if err != nil {
+		return &Product{}, err
+	}
+	if p.ID != 0 {
+		err = db.Debug().Model(&User{}).Where("id = ?", p.SellerID).Take(&p.Seller).Error
+		if err != nil {
+			return &Product{}, err
+		}
+	}
+	return p, nil
 }

@@ -16,7 +16,7 @@ type User struct {
 	ID        uint32    `gorm:"primary_key;auto_increment" json:"id"`
 	Username  string    `gorm:"size:255;not null;unique" json:"username"`
 	Email     string    `gorm:"size:100;not null;unique" json:"email"`
-	Password  string    `gorm:"size:100;not null;" json:"password"`
+	Password  string    `gorm:"size:100;not null;" json:"-"`
 	Role      string    `gorm:"size:100;not null" json:"role"`
 	Deposit   float32   `gorm:"size:50;not null" json:"deposit"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
@@ -55,14 +55,8 @@ func (u *User) Validate(action string) error {
 		if u.Username == "" {
 			return errors.New("Required Username")
 		}
-		if u.Password == "" {
-			return errors.New("Required Password")
-		}
-		if u.Email == "" {
-			return errors.New("Required Email")
-		}
-		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
+		if u.Deposit < 1 {
+			return errors.New("Required Deposit")
 		}
 
 		return nil
@@ -142,10 +136,9 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	}
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
-			"password":  u.Password,
-			"Username":  u.Username,
-			"email":     u.Email,
-			"update_at": time.Now(),
+			"username":   u.Username,
+			"deposit":    u.Deposit,
+			"updated_at": time.Now(),
 		},
 	)
 	if db.Error != nil {
@@ -176,4 +169,18 @@ func IsValidCategory(category string) bool {
 		return true
 	}
 	return false
+}
+func (u *User) UpdateAUserBal(db *gorm.DB, uid uint32) (*User, error) {
+
+	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
+		map[string]interface{}{
+			"deposit":    u.Deposit,
+			"updated_at": time.Now(),
+		},
+	)
+	if db.Error != nil {
+		return &User{}, db.Error
+	}
+
+	return u, nil
 }

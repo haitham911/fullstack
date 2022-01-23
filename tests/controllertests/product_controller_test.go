@@ -34,62 +34,62 @@ func TestCreateProduct(t *testing.T) {
 	samples := []struct {
 		inputJSON       string
 		statusCode      int
-		title           string
+		proudctName     string
 		amountAvailable int32
 		seller_id       uint32
 		tokenGiven      string
 		errorMessage    string
 	}{
 		{
-			inputJSON:       `{"title":"The title", "amount_available": 100, "seller_id": 1}`,
+			inputJSON:       `{"proudct_name":"The proudct_name", "amount_available": 100, "seller_id": 1}`,
 			statusCode:      201,
 			tokenGiven:      tokenString,
-			title:           "The title",
+			proudctName:     "The proudct_name",
 			amountAvailable: 100,
 			seller_id:       user.ID,
 			errorMessage:    "",
 		},
 		{
-			inputJSON:    `{"title":"The title", "content": "the content", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"The proudct_name", "amount_available": "the amount_available", "seller_id": 1}`,
 			statusCode:   500,
 			tokenGiven:   tokenString,
 			errorMessage: "ProductName Already Taken",
 		},
 		{
 			// When no token is passed
-			inputJSON:    `{"title":"When no token is passed", "content": "the content", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"When no token is passed", "amount_available": "the amount_available", "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "",
 			errorMessage: "Unauthorized",
 		},
 		{
 			// When incorrect token is passed
-			inputJSON:    `{"title":"When incorrect token is passed", "content": "the content", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"When incorrect token is passed", "amount_available": "the amount_available", "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "This is an incorrect token",
 			errorMessage: "Unauthorized",
 		},
 		{
-			inputJSON:    `{"title": "", "content": "The content", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name": "", "amount_available": "The amount_available", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required ProductName",
 		},
 		{
-			inputJSON:    `{"title": "This is a title", "content": "", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name": "This is a proudct_name", "amount_available": "", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required AmountAvailable",
 		},
 		{
-			inputJSON:    `{"title": "This is an awesome title", "content": "the content"}`,
+			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": "the amount_available"}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required Author",
 		},
 		{
 			// When user 2 uses user 1 token
-			inputJSON:    `{"title": "This is an awesome title", "content": "the content", "seller_id": 2}`,
+			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": "the amount_available", "seller_id": 2}`,
 			statusCode:   401,
 			tokenGiven:   tokenString,
 			errorMessage: "Unauthorized",
@@ -114,7 +114,7 @@ func TestCreateProduct(t *testing.T) {
 		}
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
-			assert.Equal(t, responseMap["title"], v.title)
+			assert.Equal(t, responseMap["proudct_name"], v.proudctName)
 			assert.Equal(t, responseMap["amount_available"], v.amountAvailable)
 			assert.Equal(t, responseMap["seller_id"], float64(v.seller_id)) //just for both ids to have the same type
 		}
@@ -162,7 +162,7 @@ func TestGetPostByID(t *testing.T) {
 	postSample := []struct {
 		id              string
 		statusCode      int
-		title           string
+		proudct_name    string
 		amountAvailable float32
 		seller_id       uint32
 		errorMessage    string
@@ -170,7 +170,7 @@ func TestGetPostByID(t *testing.T) {
 		{
 			id:              strconv.Itoa(int(post.ID)),
 			statusCode:      200,
-			title:           post.ProductName,
+			proudct_name:    post.ProductName,
 			amountAvailable: post.AmountAvailable,
 			seller_id:       post.SellerID,
 		},
@@ -199,7 +199,7 @@ func TestGetPostByID(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 
 		if v.statusCode == 200 {
-			assert.Equal(t, post.ProductName, responseMap["title"])
+			assert.Equal(t, post.ProductName, responseMap["proudct_name"])
 			assert.Equal(t, post.AmountAvailable, responseMap["amount_available"])
 			assert.Equal(t, float64(post.SellerID), responseMap["seller_id"]) //the response author id is float64
 		}
@@ -249,7 +249,7 @@ func TestUpdatePost(t *testing.T) {
 		id              string
 		updateJSON      string
 		statusCode      int
-		title           string
+		proudct_name    string
 		amountAvailable float32
 		seller_id       uint32
 		tokenGiven      string
@@ -258,9 +258,9 @@ func TestUpdatePost(t *testing.T) {
 		{
 			// Convert int64 to int first before converting to string
 			id:              strconv.Itoa(int(AuthPostID)),
-			updateJSON:      `{"title":"The updated post", "amount_available": "100", "seller_id": 1}`,
+			updateJSON:      `{"proudct_name":"The updated post", "amount_available": "100", "seller_id": 1}`,
 			statusCode:      200,
-			title:           "The updated post",
+			proudct_name:    "The updated post",
 			amountAvailable: 100,
 			seller_id:       AuthPostSellerID,
 			tokenGiven:      tokenString,
@@ -269,7 +269,7 @@ func TestUpdatePost(t *testing.T) {
 		{
 			// When no token is provided
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 1}`,
+			updateJSON:   `{"proudct_name":"This is still another proudct_name", "amount_available": "This is the updated amount_available", "seller_id": 1}`,
 			tokenGiven:   "",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -277,36 +277,36 @@ func TestUpdatePost(t *testing.T) {
 		{
 			// When incorrect token is provided
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 1}`,
+			updateJSON:   `{"proudct_name":"This is still another proudct_name", "amount_available": "This is the updated amount_available", "seller_id": 1}`,
 			tokenGiven:   "this is an incorrect token",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
 		},
 		{
-			//Note: "ProductName 2" belongs to post 2, and title must be unique
+			//Note: "ProductName 2" belongs to post 2, and proudct_name must be unique
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"ProductName 2", "content": "This is the updated content", "seller_id": 1}`,
+			updateJSON:   `{"proudct_name":"ProductName 2", "amount_available": "This is the updated amount_available", "seller_id": 1}`,
 			statusCode:   500,
 			tokenGiven:   tokenString,
 			errorMessage: "ProductName Already Taken",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"", "content": "This is the updated content", "seller_id": 1}`,
+			updateJSON:   `{"proudct_name":"", "amount_available": "This is the updated amount_available", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required ProductName",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"Awesome title", "content": "", "seller_id": 1}`,
+			updateJSON:   `{"proudct_name":"Awesome proudct_name", "amount_available": "", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required AmountAvailable",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is another title", "content": "This is the updated content"}`,
+			updateJSON:   `{"proudct_name":"This is another proudct_name", "amount_available": "This is the updated amount_available"}`,
 			statusCode:   401,
 			tokenGiven:   tokenString,
 			errorMessage: "Unauthorized",
@@ -317,7 +317,7 @@ func TestUpdatePost(t *testing.T) {
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 2}`,
+			updateJSON:   `{"proudct_name":"This is still another proudct_name", "amount_available": "This is the updated amount_available", "seller_id": 2}`,
 			tokenGiven:   tokenString,
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -345,7 +345,7 @@ func TestUpdatePost(t *testing.T) {
 		}
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 200 {
-			assert.Equal(t, responseMap["title"], v.title)
+			assert.Equal(t, responseMap["proudct_name"], v.proudct_name)
 			assert.Equal(t, responseMap["amount_available"], v.amountAvailable)
 			assert.Equal(t, responseMap["seller_id"], float64(v.seller_id)) //just to match the type of the json we receive thats why we used float64
 		}

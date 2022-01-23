@@ -29,11 +29,13 @@ var Products = []models.Product{
 		ProductName:     "ProductName 1",
 		AmountAvailable: 10,
 		SellerID:        1,
+		Price:           100,
 	},
 	models.Product{
 		ProductName:     "ProductName 2",
 		AmountAvailable: 20,
 		SellerID:        1,
+		Price:           200,
 	},
 }
 
