@@ -1,4 +1,4 @@
-module github.com/haitham911/fullstack
+module github.com/task
 
 go 1.15
 

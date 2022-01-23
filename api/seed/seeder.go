@@ -3,8 +3,8 @@ package seed
 import (
 	"log"
 
-	"github.com/haitham911/fullstack/api/models"
 	"github.com/jinzhu/gorm"
+	"github.com/task/api/models"
 )
 
 var users = []models.User{

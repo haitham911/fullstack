@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/haitham911/fullstack/api/controllers"
-	"github.com/haitham911/fullstack/api/models"
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
+	"github.com/task/api/controllers"
+	"github.com/task/api/models"
 )
 
 var server = controllers.Server{}
