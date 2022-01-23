@@ -15,7 +15,7 @@ import (
 	"gopkg.in/go-playground/assert.v1"
 )
 
-func TestCreatePost(t *testing.T) {
+func TestCreateProduct(t *testing.T) {
 
 	err := refreshUserAndPostTable()
 	if err != nil {
@@ -32,54 +32,54 @@ func TestCreatePost(t *testing.T) {
 	tokenString := fmt.Sprintf("Bearer %v", token)
 
 	samples := []struct {
-		inputJSON    string
-		statusCode   int
-		title        string
-		content      string
-		author_id    uint32
-		tokenGiven   string
-		errorMessage string
+		inputJSON       string
+		statusCode      int
+		title           string
+		amountAvailable int32
+		seller_id       uint32
+		tokenGiven      string
+		errorMessage    string
 	}{
 		{
-			inputJSON:    `{"title":"The title", "content": "the content", "author_id": 1}`,
-			statusCode:   201,
-			tokenGiven:   tokenString,
-			title:        "The title",
-			content:      "the content",
-			author_id:    user.ID,
-			errorMessage: "",
+			inputJSON:       `{"title":"The title", "amount_available": 100, "seller_id": 1}`,
+			statusCode:      201,
+			tokenGiven:      tokenString,
+			title:           "The title",
+			amountAvailable: 100,
+			seller_id:       user.ID,
+			errorMessage:    "",
 		},
 		{
-			inputJSON:    `{"title":"The title", "content": "the content", "author_id": 1}`,
+			inputJSON:    `{"title":"The title", "content": "the content", "seller_id": 1}`,
 			statusCode:   500,
 			tokenGiven:   tokenString,
-			errorMessage: "Title Already Taken",
+			errorMessage: "ProductName Already Taken",
 		},
 		{
 			// When no token is passed
-			inputJSON:    `{"title":"When no token is passed", "content": "the content", "author_id": 1}`,
+			inputJSON:    `{"title":"When no token is passed", "content": "the content", "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "",
 			errorMessage: "Unauthorized",
 		},
 		{
 			// When incorrect token is passed
-			inputJSON:    `{"title":"When incorrect token is passed", "content": "the content", "author_id": 1}`,
+			inputJSON:    `{"title":"When incorrect token is passed", "content": "the content", "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "This is an incorrect token",
 			errorMessage: "Unauthorized",
 		},
 		{
-			inputJSON:    `{"title": "", "content": "The content", "author_id": 1}`,
+			inputJSON:    `{"title": "", "content": "The content", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
-			errorMessage: "Required Title",
+			errorMessage: "Required ProductName",
 		},
 		{
-			inputJSON:    `{"title": "This is a title", "content": "", "author_id": 1}`,
+			inputJSON:    `{"title": "This is a title", "content": "", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
-			errorMessage: "Required Content",
+			errorMessage: "Required AmountAvailable",
 		},
 		{
 			inputJSON:    `{"title": "This is an awesome title", "content": "the content"}`,
@@ -89,7 +89,7 @@ func TestCreatePost(t *testing.T) {
 		},
 		{
 			// When user 2 uses user 1 token
-			inputJSON:    `{"title": "This is an awesome title", "content": "the content", "author_id": 2}`,
+			inputJSON:    `{"title": "This is an awesome title", "content": "the content", "seller_id": 2}`,
 			statusCode:   401,
 			tokenGiven:   tokenString,
 			errorMessage: "Unauthorized",
@@ -102,7 +102,7 @@ func TestCreatePost(t *testing.T) {
 			t.Errorf("this is the error: %v\n", err)
 		}
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.CreatePost)
+		handler := http.HandlerFunc(server.CreateProduct)
 
 		req.Header.Set("Authorization", v.tokenGiven)
 		handler.ServeHTTP(rr, req)
@@ -115,8 +115,8 @@ func TestCreatePost(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
 			assert.Equal(t, responseMap["title"], v.title)
-			assert.Equal(t, responseMap["content"], v.content)
-			assert.Equal(t, responseMap["author_id"], float64(v.author_id)) //just for both ids to have the same type
+			assert.Equal(t, responseMap["amount_available"], v.amountAvailable)
+			assert.Equal(t, responseMap["seller_id"], float64(v.seller_id)) //just for both ids to have the same type
 		}
 		if v.statusCode == 401 || v.statusCode == 422 || v.statusCode == 500 && v.errorMessage != "" {
 			assert.Equal(t, responseMap["error"], v.errorMessage)
@@ -140,10 +140,10 @@ func TestGetPosts(t *testing.T) {
 		t.Errorf("this is the error: %v\n", err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(server.GetPosts)
+	handler := http.HandlerFunc(server.GetProducts)
 	handler.ServeHTTP(rr, req)
 
-	var posts []models.Post
+	var posts []models.Product
 	err = json.Unmarshal([]byte(rr.Body.String()), &posts)
 
 	assert.Equal(t, rr.Code, http.StatusOK)
@@ -160,19 +160,19 @@ func TestGetPostByID(t *testing.T) {
 		log.Fatal(err)
 	}
 	postSample := []struct {
-		id           string
-		statusCode   int
-		title        string
-		content      string
-		author_id    uint32
-		errorMessage string
+		id              string
+		statusCode      int
+		title           string
+		amountAvailable float32
+		seller_id       uint32
+		errorMessage    string
 	}{
 		{
-			id:         strconv.Itoa(int(post.ID)),
-			statusCode: 200,
-			title:      post.Title,
-			content:    post.Content,
-			author_id:  post.AuthorID,
+			id:              strconv.Itoa(int(post.ID)),
+			statusCode:      200,
+			title:           post.ProductName,
+			amountAvailable: post.AmountAvailable,
+			seller_id:       post.SellerID,
 		},
 		{
 			id:         "unknwon",
@@ -188,7 +188,7 @@ func TestGetPostByID(t *testing.T) {
 		req = mux.SetURLVars(req, map[string]string{"id": v.id})
 
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.GetPost)
+		handler := http.HandlerFunc(server.GetProduct)
 		handler.ServeHTTP(rr, req)
 
 		responseMap := make(map[string]interface{})
@@ -199,9 +199,9 @@ func TestGetPostByID(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 
 		if v.statusCode == 200 {
-			assert.Equal(t, post.Title, responseMap["title"])
-			assert.Equal(t, post.Content, responseMap["content"])
-			assert.Equal(t, float64(post.AuthorID), responseMap["author_id"]) //the response author id is float64
+			assert.Equal(t, post.ProductName, responseMap["title"])
+			assert.Equal(t, post.AmountAvailable, responseMap["amount_available"])
+			assert.Equal(t, float64(post.SellerID), responseMap["seller_id"]) //the response author id is float64
 		}
 	}
 }
@@ -209,7 +209,7 @@ func TestGetPostByID(t *testing.T) {
 func TestUpdatePost(t *testing.T) {
 
 	var PostUserEmail, PostUserPassword string
-	var AuthPostAuthorID uint32
+	var AuthPostSellerID uint32
 	var AuthPostID uint64
 
 	err := refreshUserAndPostTable()
@@ -241,35 +241,35 @@ func TestUpdatePost(t *testing.T) {
 			continue
 		}
 		AuthPostID = post.ID
-		AuthPostAuthorID = post.AuthorID
+		AuthPostSellerID = post.SellerID
 	}
 	// fmt.Printf("this is the auth post: %v\n", AuthPostID)
 
 	samples := []struct {
-		id           string
-		updateJSON   string
-		statusCode   int
-		title        string
-		content      string
-		author_id    uint32
-		tokenGiven   string
-		errorMessage string
+		id              string
+		updateJSON      string
+		statusCode      int
+		title           string
+		amountAvailable float32
+		seller_id       uint32
+		tokenGiven      string
+		errorMessage    string
 	}{
 		{
 			// Convert int64 to int first before converting to string
-			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"The updated post", "content": "This is the updated content", "author_id": 1}`,
-			statusCode:   200,
-			title:        "The updated post",
-			content:      "This is the updated content",
-			author_id:    AuthPostAuthorID,
-			tokenGiven:   tokenString,
-			errorMessage: "",
+			id:              strconv.Itoa(int(AuthPostID)),
+			updateJSON:      `{"title":"The updated post", "amount_available": "100", "seller_id": 1}`,
+			statusCode:      200,
+			title:           "The updated post",
+			amountAvailable: 100,
+			seller_id:       AuthPostSellerID,
+			tokenGiven:      tokenString,
+			errorMessage:    "",
 		},
 		{
 			// When no token is provided
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "author_id": 1}`,
+			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 1}`,
 			tokenGiven:   "",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -277,32 +277,32 @@ func TestUpdatePost(t *testing.T) {
 		{
 			// When incorrect token is provided
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "author_id": 1}`,
+			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 1}`,
 			tokenGiven:   "this is an incorrect token",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
 		},
 		{
-			//Note: "Title 2" belongs to post 2, and title must be unique
+			//Note: "ProductName 2" belongs to post 2, and title must be unique
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"Title 2", "content": "This is the updated content", "author_id": 1}`,
+			updateJSON:   `{"title":"ProductName 2", "content": "This is the updated content", "seller_id": 1}`,
 			statusCode:   500,
 			tokenGiven:   tokenString,
-			errorMessage: "Title Already Taken",
+			errorMessage: "ProductName Already Taken",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"", "content": "This is the updated content", "author_id": 1}`,
+			updateJSON:   `{"title":"", "content": "This is the updated content", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
-			errorMessage: "Required Title",
+			errorMessage: "Required ProductName",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"Awesome title", "content": "", "author_id": 1}`,
+			updateJSON:   `{"title":"Awesome title", "content": "", "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
-			errorMessage: "Required Content",
+			errorMessage: "Required AmountAvailable",
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
@@ -317,7 +317,7 @@ func TestUpdatePost(t *testing.T) {
 		},
 		{
 			id:           strconv.Itoa(int(AuthPostID)),
-			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "author_id": 2}`,
+			updateJSON:   `{"title":"This is still another title", "content": "This is the updated content", "seller_id": 2}`,
 			tokenGiven:   tokenString,
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -332,7 +332,7 @@ func TestUpdatePost(t *testing.T) {
 		}
 		req = mux.SetURLVars(req, map[string]string{"id": v.id})
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.UpdatePost)
+		handler := http.HandlerFunc(server.UpdateProduct)
 
 		req.Header.Set("Authorization", v.tokenGiven)
 
@@ -346,8 +346,8 @@ func TestUpdatePost(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 200 {
 			assert.Equal(t, responseMap["title"], v.title)
-			assert.Equal(t, responseMap["content"], v.content)
-			assert.Equal(t, responseMap["author_id"], float64(v.author_id)) //just to match the type of the json we receive thats why we used float64
+			assert.Equal(t, responseMap["amount_available"], v.amountAvailable)
+			assert.Equal(t, responseMap["seller_id"], float64(v.seller_id)) //just to match the type of the json we receive thats why we used float64
 		}
 		if v.statusCode == 401 || v.statusCode == 422 || v.statusCode == 500 && v.errorMessage != "" {
 			assert.Equal(t, responseMap["error"], v.errorMessage)
@@ -390,11 +390,11 @@ func TestDeletePost(t *testing.T) {
 			continue
 		}
 		AuthPostID = post.ID
-		PostUserID = post.AuthorID
+		PostUserID = post.SellerID
 	}
 	postSample := []struct {
 		id           string
-		author_id    uint32
+		seller_id    uint32
 		tokenGiven   string
 		statusCode   int
 		errorMessage string
@@ -402,7 +402,7 @@ func TestDeletePost(t *testing.T) {
 		{
 			// Convert int64 to int first before converting to string
 			id:           strconv.Itoa(int(AuthPostID)),
-			author_id:    PostUserID,
+			seller_id:    PostUserID,
 			tokenGiven:   tokenString,
 			statusCode:   204,
 			errorMessage: "",
@@ -410,7 +410,7 @@ func TestDeletePost(t *testing.T) {
 		{
 			// When empty token is passed
 			id:           strconv.Itoa(int(AuthPostID)),
-			author_id:    PostUserID,
+			seller_id:    PostUserID,
 			tokenGiven:   "",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -418,7 +418,7 @@ func TestDeletePost(t *testing.T) {
 		{
 			// When incorrect token is passed
 			id:           strconv.Itoa(int(AuthPostID)),
-			author_id:    PostUserID,
+			seller_id:    PostUserID,
 			tokenGiven:   "This is an incorrect token",
 			statusCode:   401,
 			errorMessage: "Unauthorized",
@@ -430,7 +430,7 @@ func TestDeletePost(t *testing.T) {
 		},
 		{
 			id:           strconv.Itoa(int(1)),
-			author_id:    1,
+			seller_id:    1,
 			statusCode:   401,
 			errorMessage: "Unauthorized",
 		},
@@ -441,7 +441,7 @@ func TestDeletePost(t *testing.T) {
 		req = mux.SetURLVars(req, map[string]string{"id": v.id})
 
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.DeletePost)
+		handler := http.HandlerFunc(server.DeleteProduct)
 
 		req.Header.Set("Authorization", v.tokenGiven)
 

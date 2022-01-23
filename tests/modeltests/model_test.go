@@ -14,7 +14,7 @@ import (
 
 var server = controllers.Server{}
 var userInstance = models.User{}
-var postInstance = models.Post{}
+var productInstance = models.Product{}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -73,7 +73,7 @@ func seedOneUser() (models.User, error) {
 	refreshUserTable()
 
 	user := models.User{
-		Nickname: "Pet",
+		Username: "Pet",
 		Email:    "pet@gmail.com",
 		Password: "password",
 	}
@@ -89,12 +89,12 @@ func seedUsers() error {
 
 	users := []models.User{
 		models.User{
-			Nickname: "Steven victor",
+			Username: "Steven victor",
 			Email:    "steven@gmail.com",
 			Password: "password",
 		},
 		models.User{
-			Nickname: "Kenny Morris",
+			Username: "Kenny Morris",
 			Email:    "kenny@gmail.com",
 			Password: "password",
 		},
@@ -109,13 +109,13 @@ func seedUsers() error {
 	return nil
 }
 
-func refreshUserAndPostTable() error {
+func refreshUserAndProductTable() error {
 
-	err := server.DB.DropTableIfExists(&models.User{}, &models.Post{}).Error
+	err := server.DB.DropTableIfExists(&models.User{}, &models.Product{}).Error
 	if err != nil {
 		return err
 	}
-	err = server.DB.AutoMigrate(&models.User{}, &models.Post{}).Error
+	err = server.DB.AutoMigrate(&models.User{}, &models.Product{}).Error
 	if err != nil {
 		return err
 	}
@@ -123,60 +123,60 @@ func refreshUserAndPostTable() error {
 	return nil
 }
 
-func seedOneUserAndOnePost() (models.Post, error) {
+func seedOneUserAndOneProduct() (models.Product, error) {
 
-	err := refreshUserAndPostTable()
+	err := refreshUserAndProductTable()
 	if err != nil {
-		return models.Post{}, err
+		return models.Product{}, err
 	}
 	user := models.User{
-		Nickname: "Sam Phil",
+		Username: "Sam Phil",
 		Email:    "sam@gmail.com",
 		Password: "password",
 	}
 	err = server.DB.Model(&models.User{}).Create(&user).Error
 	if err != nil {
-		return models.Post{}, err
+		return models.Product{}, err
 	}
-	post := models.Post{
-		Title:    "This is the title sam",
-		Content:  "This is the content sam",
-		AuthorID: user.ID,
+	product := models.Product{
+		ProductName:     "This is the title sam",
+		AmountAvailable: 1000,
+		SellerID:        user.ID,
 	}
-	err = server.DB.Model(&models.Post{}).Create(&post).Error
+	err = server.DB.Model(&models.Product{}).Create(&product).Error
 	if err != nil {
-		return models.Post{}, err
+		return models.Product{}, err
 	}
-	return post, nil
+	return product, nil
 }
 
-func seedUsersAndPosts() ([]models.User, []models.Post, error) {
+func seedUsersAndProducts() ([]models.User, []models.Product, error) {
 
 	var err error
 
 	if err != nil {
-		return []models.User{}, []models.Post{}, err
+		return []models.User{}, []models.Product{}, err
 	}
 	var users = []models.User{
 		models.User{
-			Nickname: "Steven victor",
+			Username: "Steven victor",
 			Email:    "steven@gmail.com",
 			Password: "password",
 		},
 		models.User{
-			Nickname: "Magu Frank",
+			Username: "Magu Frank",
 			Email:    "magu@gmail.com",
 			Password: "password",
 		},
 	}
-	var posts = []models.Post{
-		models.Post{
-			Title:   "Title 1",
-			Content: "Hello world 1",
+	var products = []models.Product{
+		models.Product{
+			ProductName:     "ProductName 1",
+			AmountAvailable: 100,
 		},
-		models.Post{
-			Title:   "Title 2",
-			Content: "Hello world 2",
+		models.Product{
+			ProductName:     "ProductName 2",
+			AmountAvailable: 100,
 		},
 	}
 
@@ -185,12 +185,12 @@ func seedUsersAndPosts() ([]models.User, []models.Post, error) {
 		if err != nil {
 			log.Fatalf("cannot seed users table: %v", err)
 		}
-		posts[i].AuthorID = users[i].ID
+		products[i].SellerID = users[i].ID
 
-		err = server.DB.Model(&models.Post{}).Create(&posts[i]).Error
+		err = server.DB.Model(&models.Product{}).Create(&products[i]).Error
 		if err != nil {
-			log.Fatalf("cannot seed posts table: %v", err)
+			log.Fatalf("cannot seed Products table: %v", err)
 		}
 	}
-	return users, posts, nil
+	return users, products, nil
 }

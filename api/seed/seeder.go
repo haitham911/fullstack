@@ -9,40 +9,46 @@ import (
 
 var users = []models.User{
 	models.User{
-		Nickname: "Steven victor",
-		Email:    "steven@gmail.com",
+		Username: "haitham rageh",
+		Email:    "haitham@gmail.com",
 		Password: "password",
+		Role:     "seller",
+		Deposit:  0,
 	},
 	models.User{
-		Nickname: "Martin Luther",
-		Email:    "luther@gmail.com",
+		Username: "osama zean",
+		Email:    "osama@gmail.com",
 		Password: "password",
+		Role:     "buyer",
+		Deposit:  1000,
 	},
 }
 
-var posts = []models.Post{
-	models.Post{
-		Title:   "Title 1",
-		Content: "Hello world 1",
+var Products = []models.Product{
+	models.Product{
+		ProductName:     "ProductName 1",
+		AmountAvailable: 10,
+		SellerID:        1,
 	},
-	models.Post{
-		Title:   "Title 2",
-		Content: "Hello world 2",
+	models.Product{
+		ProductName:     "ProductName 2",
+		AmountAvailable: 20,
+		SellerID:        1,
 	},
 }
 
 func Load(db *gorm.DB) {
 
-	err := db.Debug().DropTableIfExists(&models.Post{}, &models.User{}).Error
+	err := db.Debug().DropTableIfExists(&models.Product{}, &models.User{}).Error
 	if err != nil {
 		log.Fatalf("cannot drop table: %v", err)
 	}
-	err = db.Debug().AutoMigrate(&models.User{}, &models.Post{}).Error
+	err = db.Debug().AutoMigrate(&models.User{}, &models.Product{}).Error
 	if err != nil {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
 
-	err = db.Debug().Model(&models.Post{}).AddForeignKey("author_id", "users(id)", "cascade", "cascade").Error
+	err = db.Debug().Model(&models.Product{}).AddForeignKey("seller_id", "users(id)", "cascade", "cascade").Error
 	if err != nil {
 		log.Fatalf("attaching foreign key error: %v", err)
 	}
@@ -52,11 +58,11 @@ func Load(db *gorm.DB) {
 		if err != nil {
 			log.Fatalf("cannot seed users table: %v", err)
 		}
-		posts[i].AuthorID = users[i].ID
+		Products[i].SellerID = users[i].ID
 
-		err = db.Debug().Model(&models.Post{}).Create(&posts[i]).Error
+		err = db.Debug().Model(&models.Product{}).Create(&Products[i]).Error
 		if err != nil {
-			log.Fatalf("cannot seed posts table: %v", err)
+			log.Fatalf("cannot seed Products table: %v", err)
 		}
 	}
 }

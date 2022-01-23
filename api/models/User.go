@@ -14,9 +14,11 @@ import (
 
 type User struct {
 	ID        uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	Nickname  string    `gorm:"size:255;not null;unique" json:"nickname"`
+	Username  string    `gorm:"size:255;not null;unique" json:"username"`
 	Email     string    `gorm:"size:100;not null;unique" json:"email"`
 	Password  string    `gorm:"size:100;not null;" json:"password"`
+	Role      string    `gorm:"size:100;not null" json:"role"`
+	Deposit   float32   `gorm:"size:50;not null" json:"deposit"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
@@ -40,8 +42,9 @@ func (u *User) BeforeSave() error {
 
 func (u *User) Prepare() {
 	u.ID = 0
-	u.Nickname = html.EscapeString(strings.TrimSpace(u.Nickname))
+	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
+	u.Role = html.EscapeString(strings.TrimSpace(u.Role))
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()
 }
@@ -49,8 +52,8 @@ func (u *User) Prepare() {
 func (u *User) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "update":
-		if u.Nickname == "" {
-			return errors.New("Required Nickname")
+		if u.Username == "" {
+			return errors.New("Required Username")
 		}
 		if u.Password == "" {
 			return errors.New("Required Password")
@@ -76,11 +79,17 @@ func (u *User) Validate(action string) error {
 		return nil
 
 	default:
-		if u.Nickname == "" {
-			return errors.New("Required Nickname")
+		if u.Username == "" {
+			return errors.New("Required Username")
 		}
 		if u.Password == "" {
 			return errors.New("Required Password")
+		}
+		if u.Role == "" {
+			return errors.New("Required Role")
+		}
+		if !IsValidCategory(u.Role) {
+			return errors.New("Not Vaild Role Please Set To seller or buyer")
 		}
 		if u.Email == "" {
 			return errors.New("Required Email")
@@ -134,7 +143,7 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
 			"password":  u.Password,
-			"nickname":  u.Nickname,
+			"Username":  u.Username,
 			"email":     u.Email,
 			"update_at": time.Now(),
 		},
@@ -158,4 +167,13 @@ func (u *User) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
 		return 0, db.Error
 	}
 	return db.RowsAffected, nil
+}
+func IsValidCategory(category string) bool {
+	switch category {
+	case
+		"buyer",
+		"seller":
+		return true
+	}
+	return false
 }
