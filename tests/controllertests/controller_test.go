@@ -26,8 +26,6 @@ func TestMain(m *testing.M) {
 	MainDB()
 	time.Sleep(30 * time.Second)
 
-	Database()
-
 	os.Exit(m.Run())
 
 }

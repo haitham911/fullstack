@@ -48,16 +48,8 @@ func MainDB() {
 	resource.Expire(120) // Tell docker to hard kill the container in 120 seconds
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	pool.MaxWait = 120 * time.Second
-	if err = pool.Retry(func() error {
-		db, err = sql.Open("postgres", databaseUrl)
-		if err != nil {
-			return err
-		}
-		return db.Ping()
-	}); err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
-	}
+	time.Sleep(45 * time.Second)
+	Database(databaseUrl)
 
 	// You can't defer this because os.Exit doesn't care for defer
 	if err := pool.Purge(resource); err != nil {
