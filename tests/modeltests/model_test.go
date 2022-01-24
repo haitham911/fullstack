@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
@@ -22,6 +23,9 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Error getting env %v\n", err)
 	}
+	MainDB()
+	time.Sleep(30 * time.Second)
+
 	Database()
 
 	os.Exit(m.Run())
