@@ -5,6 +5,8 @@
 </a>
 </p>
 
+![codecov](https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc)
+
 ![CI](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg?branch=master&event=push)
 
 ## Task
