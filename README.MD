@@ -3,7 +3,7 @@
 
 ![codecov](https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc)
 ![CI](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg?branch=master&event=push)
-  
+[![Docker Image CI](https://github.com/haitham911/fullstack/actions/workflows/docker-image.yml/badge.svg)](https://github.com/haitham911/fullstack/actions/workflows/docker-image.yml)
  </p>
 
 ## Task
