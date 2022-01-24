@@ -24,7 +24,7 @@ func MainDB() {
 	// pulls an image, creates a container based on it and runs it
 	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "postgres",
-		Tag:        "11",
+		Tag:        "latest",
 		Env: []string{
 			"POSTGRES_PASSWORD=password",
 			"POSTGRES_USER=username",
@@ -41,7 +41,7 @@ func MainDB() {
 	}
 
 	hostAndPort := resource.GetHostPort("5432/tcp")
-	databaseUrl := fmt.Sprintf("postgres://user_name:secret@%s/dbname?sslmode=disable", hostAndPort)
+	databaseUrl := fmt.Sprintf("postgres://username:password@%s/task_test?sslmode=disable", hostAndPort)
 
 	log.Println("Connecting to database on url: ", databaseUrl)
 
