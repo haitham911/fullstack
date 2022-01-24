@@ -9,7 +9,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/task/api/models"
 	"gopkg.in/go-playground/assert.v1"
 )
 
@@ -120,30 +119,4 @@ func TestCreateProduct(t *testing.T) {
 			assert.Equal(t, responseMap["error"], v.errorMessage)
 		}
 	}
-}
-
-func TestGetProudcts(t *testing.T) {
-
-	err := refreshUserAndPostTable()
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, _, err = seedUsersAndPosts()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req, err := http.NewRequest("GET", "/proudcts", nil)
-	if err != nil {
-		t.Errorf("this is the error: %v\n", err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(server.GetProducts)
-	handler.ServeHTTP(rr, req)
-
-	var posts []models.Product
-	err = json.Unmarshal([]byte(rr.Body.String()), &posts)
-
-	assert.Equal(t, rr.Code, http.StatusOK)
-	assert.Equal(t, len(posts), 2)
 }
