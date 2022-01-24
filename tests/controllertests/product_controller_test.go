@@ -181,7 +181,7 @@ func TestGetPostByID(t *testing.T) {
 	}
 	for _, v := range postSample {
 
-		req, err := http.NewRequest("GET", "/posts", nil)
+		req, err := http.NewRequest("GET", "/proudcts", nil)
 		if err != nil {
 			t.Errorf("this is the error: %v\n", err)
 		}
