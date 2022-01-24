@@ -7,10 +7,8 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/task/api/models"
 	"gopkg.in/go-playground/assert.v1"
 )
@@ -124,7 +122,7 @@ func TestCreateProduct(t *testing.T) {
 	}
 }
 
-func TestGetPosts(t *testing.T) {
+func TestGetProudcts(t *testing.T) {
 
 	err := refreshUserAndPostTable()
 	if err != nil {
@@ -148,60 +146,4 @@ func TestGetPosts(t *testing.T) {
 
 	assert.Equal(t, rr.Code, http.StatusOK)
 	assert.Equal(t, len(posts), 2)
-}
-func TestGetPostByID(t *testing.T) {
-
-	err := refreshUserAndPostTable()
-	if err != nil {
-		log.Fatal(err)
-	}
-	post, err := seedOneUserAndOnePost()
-	if err != nil {
-		log.Fatal(err)
-	}
-	postSample := []struct {
-		id              string
-		statusCode      int
-		proudct_name    string
-		amountAvailable float32
-		seller_id       uint32
-		errorMessage    string
-	}{
-		{
-			id:              strconv.Itoa(int(post.ID)),
-			statusCode:      200,
-			proudct_name:    post.ProductName,
-			amountAvailable: post.AmountAvailable,
-			seller_id:       post.SellerID,
-		},
-		{
-			id:         "unknwon",
-			statusCode: 400,
-		},
-	}
-	for _, v := range postSample {
-
-		req, err := http.NewRequest("GET", "/proudcts", nil)
-		if err != nil {
-			t.Errorf("this is the error: %v\n", err)
-		}
-		req = mux.SetURLVars(req, map[string]string{"id": v.id})
-
-		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(server.GetProduct)
-		handler.ServeHTTP(rr, req)
-
-		responseMap := make(map[string]interface{})
-		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
-		if err != nil {
-			log.Fatalf("Cannot convert to json: %v", err)
-		}
-		assert.Equal(t, rr.Code, v.statusCode)
-
-		if v.statusCode == 200 {
-			assert.Equal(t, post.ProductName, responseMap["proudct_name"])
-			assert.Equal(t, post.AmountAvailable, responseMap["amount_available"])
-			assert.Equal(t, float64(post.SellerID), responseMap["seller_id"]) //the response author id is float64
-		}
-	}
 }
