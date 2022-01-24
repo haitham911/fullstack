@@ -1,4 +1,7 @@
 [![codecov](https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc)](https://codecov.io/gh/haitham911/fullstack)
+<a href="https://codecov.io/gh/haitham911/fullstack">
+  <img src="https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc"/>
+</a>
 ## Tasks
 > **sample:**
 >
