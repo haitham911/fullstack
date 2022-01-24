@@ -3,48 +3,28 @@ package modeltests
 import (
 	"fmt"
 	"log"
-	"os"
-	"testing"
-	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
-	"github.com/task/api/controllers"
 	"github.com/task/api/models"
 )
 
-var server = controllers.Server{}
-var userInstance = models.User{}
-var productInstance = models.Product{}
-
-func TestMain(m *testing.M) {
-	var err error
-	err = godotenv.Load(os.ExpandEnv("../../.env"))
-	if err != nil {
-		log.Fatalf("Error getting env %v\n", err)
-	}
-	MainDB()
-	time.Sleep(30 * time.Second)
-
-	os.Exit(m.Run())
-}
-
-func Database(databaseUrl string) {
+func Database(databaseUrl string) error {
 
 	var err error
 
-	TestDbDriver := os.Getenv("TestDbDriver")
+	TestDbDriver := "postgres"
 
 	if TestDbDriver == "postgres" {
 		DBURL := databaseUrl
 		server.DB, err = gorm.Open(TestDbDriver, DBURL)
 		if err != nil {
 			fmt.Printf("Cannot connect to %s database\n", TestDbDriver)
-			log.Fatal("This is the error:", err)
+			return err
 		} else {
 			fmt.Printf("We are connected to the %s database\n", TestDbDriver)
 		}
 	}
+	return err
 }
 
 func refreshUserTable() error {
