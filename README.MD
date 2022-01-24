@@ -4,7 +4,7 @@
   <img src="https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc"/>
 </a>
 <p align="center">
-  ![workflow](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg)
+ <img src="![workflow](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg)"/?
 </p>
 </p>
 ## Task
