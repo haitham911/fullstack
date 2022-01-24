@@ -1,8 +1,13 @@
-[![codecov](https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc)](https://codecov.io/gh/haitham911/fullstack)
+<h1 align="center">Task</h1>
+<p align="center">
 <a href="https://codecov.io/gh/haitham911/fullstack">
   <img src="https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc"/>
 </a>
-## Tasks
+ <a href="https://codecov.io/gh/haitham911/fullstack/actions/workflows/codecov.yaml">
+        <img src="https://codecov.io/gh/haitham911/fullstack/actions/workflows/codecov.yaml/badge.svg"/>
+    </a>
+</p>
+## Task
 > **sample:**
 >
 > REST API should be implemented consuming and producing “application/json”
