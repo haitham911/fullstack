@@ -48,46 +48,46 @@ func TestCreateProduct(t *testing.T) {
 			errorMessage:    "",
 		},
 		{
-			inputJSON:    `{"proudct_name":"The proudct_name", "amount_available": "the amount_available", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"The proudct_name", "amount_available": 10, "seller_id": 1}`,
 			statusCode:   500,
 			tokenGiven:   tokenString,
 			errorMessage: "ProductName Already Taken",
 		},
 		{
 			// When no token is passed
-			inputJSON:    `{"proudct_name":"When no token is passed", "amount_available": "the amount_available", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"When no token is passed", "amount_available": 10, "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "",
 			errorMessage: "Unauthorized",
 		},
 		{
 			// When incorrect token is passed
-			inputJSON:    `{"proudct_name":"When incorrect token is passed", "amount_available": "the amount_available", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name":"When incorrect token is passed", "amount_available": 10, "seller_id": 1}`,
 			statusCode:   401,
 			tokenGiven:   "This is an incorrect token",
 			errorMessage: "Unauthorized",
 		},
 		{
-			inputJSON:    `{"proudct_name": "", "amount_available": "The amount_available", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name": "", "amount_available": 10, "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required ProductName",
 		},
 		{
-			inputJSON:    `{"proudct_name": "This is a proudct_name", "amount_available": "", "seller_id": 1}`,
+			inputJSON:    `{"proudct_name": "This is a proudct_name", "amount_available": 10, "seller_id": 1}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required AmountAvailable",
 		},
 		{
-			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": "the amount_available"}`,
+			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": 10}`,
 			statusCode:   422,
 			tokenGiven:   tokenString,
 			errorMessage: "Required Author",
 		},
 		{
 			// When user 2 uses user 1 token
-			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": "the amount_available", "seller_id": 2}`,
+			inputJSON:    `{"proudct_name": "This is an awesome proudct_name", "amount_available": 10, "seller_id": 2}`,
 			statusCode:   401,
 			tokenGiven:   tokenString,
 			errorMessage: "Unauthorized",
