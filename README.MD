@@ -1,8 +1,7 @@
 <h1 align="center">Task</h1>
 <p align="center">
-
 ![codecov](https://codecov.io/gh/haitham911/fullstack/branch/master/graph/badge.svg?token=oZzvTyKCYc)
-![CI](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg?branch=master&event=push)
+[![CI](https://github.com/haitham911/fullstack/actions/workflows/test.yml/badge.svg)](https://github.com/haitham911/fullstack/actions/workflows/test.yml)
 [![Docker Image CI](https://github.com/haitham911/fullstack/actions/workflows/docker-image.yml/badge.svg)](https://github.com/haitham911/fullstack/actions/workflows/docker-image.yml)
  </p>
 
