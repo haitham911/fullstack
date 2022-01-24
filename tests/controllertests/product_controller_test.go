@@ -97,7 +97,7 @@ func TestCreateProduct(t *testing.T) {
 	}
 	for _, v := range samples {
 
-		req, err := http.NewRequest("POST", "/posts", bytes.NewBufferString(v.inputJSON))
+		req, err := http.NewRequest("POST", "/proudcts", bytes.NewBufferString(v.inputJSON))
 		if err != nil {
 			t.Errorf("this is the error: %v\n", err)
 		}
@@ -135,7 +135,7 @@ func TestGetPosts(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	req, err := http.NewRequest("GET", "/posts", nil)
+	req, err := http.NewRequest("GET", "/proudcts", nil)
 	if err != nil {
 		t.Errorf("this is the error: %v\n", err)
 	}
