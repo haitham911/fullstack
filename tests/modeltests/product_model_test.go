@@ -87,21 +87,21 @@ func TestUpdateAProduct(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Error Seeding table")
 	}
-	postUpdate := models.Product{
+	proudctUpdate := models.Product{
 		ID:              1,
 		ProductName:     "modiUpdate",
 		AmountAvailable: 100,
 		SellerID:        post.SellerID,
 	}
-	updatedProduct, err := postUpdate.UpdateAProduct(server.DB)
+	updatedProduct, err := proudctUpdate.UpdateAProduct(server.DB)
 	if err != nil {
 		t.Errorf("this is the error updating the user: %v\n", err)
 		return
 	}
-	assert.Equal(t, updatedProduct.ID, postUpdate.ID)
-	assert.Equal(t, updatedProduct.ProductName, postUpdate.ProductName)
-	assert.Equal(t, updatedProduct.AmountAvailable, postUpdate.AmountAvailable)
-	assert.Equal(t, updatedProduct.SellerID, postUpdate.SellerID)
+	assert.Equal(t, updatedProduct.ID, proudctUpdate.ID)
+	assert.Equal(t, updatedProduct.ProductName, proudctUpdate.ProductName)
+	assert.Equal(t, updatedProduct.AmountAvailable, proudctUpdate.AmountAvailable)
+	assert.Equal(t, updatedProduct.SellerID, proudctUpdate.SellerID)
 }
 
 func TestDeleteAProduct(t *testing.T) {

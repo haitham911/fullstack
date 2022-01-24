@@ -17,7 +17,7 @@ import (
 var (
 	user     = "postgres"
 	password = "secret"
-	db       = "test"
+	db       = "test-controller"
 	port     = "5433"
 	dsn      = "postgres://%s:%s@localhost:%s/%s?sslmode=disable"
 )

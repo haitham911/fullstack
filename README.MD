@@ -62,3 +62,8 @@ To hit endpoints of the run postman:
 import task.postman_collection
 import task.postman_environment
 ```
+To run test:
+
+```console
+go test -v -coverprofile=coverage.out ./...
+```
